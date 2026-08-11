@@ -1,6 +1,7 @@
 import asyncio
 import json
 import time
+import uuid
 from typing import AsyncGenerator
 
 import websockets
@@ -15,9 +16,14 @@ async def stream_jiuwenclaw(
     Connect to JiuwenClaw WebSocket and yield SSE-style event dicts.
     Status events: {event, payload}
     Terminal event: {_type: "done", data: str} or {_type: "error", message: str}
+
+    Each call opens its own WebSocket connection with a unique wire request id,
+    but reuses ONE stable session id for the whole planning flow.
     """
     full_content = f"[Task: {task}]\n\n{system_prompt}\n\n---\n\n{user_message}"
-    session_id = f"tripwise_{task}_{int(time.time())}"
+    # One stable session for the whole flow — later steps reuse the context of
+    # earlier ones. Parallelism comes from team mode, not parallel pages.
+    session_id = settings.jiuwenclaw_session_id
 
     print(f"\n[Tripewise - JiuwenClaw] ── task={task!r}  session={session_id}")
     print(f"[Tripewise - JiuwenClaw] Connecting to {settings.jiuwenclaw_ws_url} ...")
@@ -27,9 +33,11 @@ async def stream_jiuwenclaw(
             print(f"[Tripewise ✅ JiuwenClaw]: Connected")
 
             effective_mode = mode or settings.default_jiuwenclaw_mode
+            # Unique id per request (concurrent pages must not share one).
+            request_id = uuid.uuid4().hex
             msg_out = {
                 "type": "req",
-                "id": "req_postman_001",
+                "id": request_id,
                 "method": "chat.send",
                 "params": {"session_id": session_id, "content": full_content, "mode": effective_mode},
             }

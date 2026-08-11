@@ -28,10 +28,10 @@ TripWise is a full-stack demo application that walks a user through every step o
 ## Quick Start
 
 ```bash
-cd TripwisePython
+cd Tripwise
 cp .env.example .env
-pip install -r requirements.txt
-python main.py
+uv sync
+uv run main.py
 ```
 
 Visit `http://localhost:3025` and select **Debug** mode for instant testing with mock data, or configure an AI backend in `.env` for real trip planning.
@@ -563,10 +563,10 @@ All prompts are in `utils/prompts.py`. Modify `build_system_prompt()` to adjust 
 ## Running Locally
 
 ```bash
-cd TripwisePython
+cd Tripwise
 cp .env.example .env          # configure API keys and backend URLs
-pip install -r requirements.txt
-python main.py                # starts on http://localhost:3025
+uv sync
+uv run main.py                # starts on http://localhost:3025
 ```
 
 Open `http://localhost:3025` in a browser. Select the AI backend in the settings dropdown:
@@ -578,6 +578,17 @@ Open `http://localhost:3025` in a browser. Select the AI backend in the settings
 - **OpenClaw** ⚠️ **(Disabled)** - Integration not finalized
 
 For a quick test without any backend setup, select **Debug** mode and start planning immediately.
+
+### One session + team mode
+
+- **One session** — every request reuses a single stable session id
+  (`JIUWENCLAW_SESSION_ID`, default `tripwise`), so later steps (flights, hotels,
+  itinerary) can reference the context of earlier ones. Parallelism is NOT done via
+  parallel pages; it comes from team mode.
+- **Team mode** — in the JiuwenClaw settings pick **Cluster** (`mode: "team"`). The
+  request is sent with `"mode": "team"`; the server spawns a team inside that session
+  (members work in parallel) and the leader's final answer arrives as the normal
+  `chat.final` stream, with teammate activity surfacing as `team.*` / status events.
 
 ### Backend Requirements
 

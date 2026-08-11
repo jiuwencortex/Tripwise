@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     openclaw_agent_id: str = ""                # Optional: specific agent ID to route to
     openclaw_model: str = ""                   # Optional: model override (e.g., "anthropic/claude-sonnet-4.5")
     ws_timeout: int = 1800  # seconds
+    # One stable session id for the whole planning flow — every request reuses it,
+    # so later steps can reference earlier context. Parallelism comes from team
+    # mode (the server spawns members within this session), not from parallel pages.
+    jiuwenclaw_session_id: str = "tripwise"
     default_jiuwenclaw_mode: str = "agent.plan"  # agent.plan | agent.fast | team | code.plan | code.normal
     openjiuwen_url: str = "http://localhost:8080/agents/execute"
     openjiuwen_agent_id: str = "react_agent_id"

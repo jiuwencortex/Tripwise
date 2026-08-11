@@ -1,4 +1,13 @@
 import os
+import sys
+
+# Windows consoles default to cp1252, which cannot encode the emoji / box-drawing
+# characters used in the service log lines — force UTF-8 so startup doesn't crash.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

@@ -1,0 +1,15 @@
+:root {
+  --bg:#000000; --fg:#F1EDE6; --fg-dim:#8B8680; --card:#181B23;
+  --border:#2A2D37; --accent:#E76F51; --accent2:#2A9D8F;
+  --heading:'Playfair Display', Georgia, serif;
+  --body:'DM Sans','Segoe UI',sans-serif;
+  --danger:#ff8b7a;
+  --ok:#79d3b2;
+}
+* {box-sizing:border-box}
+body {margin:0;background:var(--bg);color:var(--fg);font-family:var(--body)}
+a {color:var(--accent)}
+.muted {color:var(--fg-dim)}
+.accent {color:var(--accent)}
+@keyframes spin {to{transform:rotate(360deg)}}
+@keyframes pulse {0%,100%{opacity:1}50%{opacity:.6}}
